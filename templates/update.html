@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block body %}
+    <form action="/update/{{content.SNO}}" method="POST" class="mx-auto t-5 w-50">
+        <div class="mb-3">
+            <label for="exampleInput" class="form-label">Amount Spent</label>
+            <input type="text" class="form-control" name="Amount" placeholder="Amount spent" value="{{content.Amount}}">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInput" class="form-label">Reason for expense</label>
+            <input type="text" class="form-control" name="Expense" placeholder="Reason for expense" value="{{content.Expense}}">
+        </div>
+        <div class="d-grid mx-auto b-2">
+            <button type="submit" class="btn btn-dark b-2">Update</button>
+        </div>
+    </form>
+    {% endblock body %}
