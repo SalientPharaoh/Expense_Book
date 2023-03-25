@@ -93,4 +93,4 @@ def stories():
     return render_template('stories.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
