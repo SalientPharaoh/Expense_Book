@@ -65,8 +65,6 @@ def delete(sno):
     money=Money.query.first()
     money.balance = money.balance + prevamt
     db.session.commit()
-
-
     return redirect('/')
 
 @app.route('/update/<int:sno>', methods=['GET', 'POST'])

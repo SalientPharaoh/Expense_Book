@@ -14,9 +14,16 @@ To deploy this project follow the following steps
 
 ## Features
 
-- Making deposits to calculate available balance
 - CRUD operations for each expense
-- Tracking total expense and amount remaining
-- Easy and simple
+- Tracking total expense and balance remaining
+- Depositing and withdrawing operations
+- Resetting the dashboard
+- Database integration (SQLite)
+
+## Preview
+
+![preview_image_one](/preview_screen/Screenshot.png)
+
+![preview_image_two](/preview_screen/Screenshot2.png)
 
 
