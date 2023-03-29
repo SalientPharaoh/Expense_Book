@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% block body %}
     <div class="d-flex justify-content-between m-4">
-        <div class="d-inline p-2 text-bg-dark m-3">Total Amount Deposited :- {{balance.total}}</div>
-        <div class="d-inline p-2 text-bg-dark m-3">Balance Remaining:- {{balance.balance}}
+        <div class="d-inline p-2 text-bg-dark m-3">Total Amount Deposited :- {{balance[0].total}}</div>
+        <div class="d-inline p-2 text-bg-dark m-3">Balance Remaining:- {{balance[0].balance}}
         </div>
-        <div class="d-inline p-2 text-bg-dark m-3">Expense This Month :- {{balance.total - balance.balance}}</div>
+        <div class="d-inline p-2 text-bg-dark m-3">Expense This Month :- {{balance[0].total - balance[0].balance}}</div>
     </div>
     <form action="/" method="POST" class="mx-auto t-5 w-50">
         <div class="mb-3">
@@ -21,6 +21,8 @@
     </form>
     <div class="d-grid gap-2 col-6 mx-auto m-2">
         <a href="/deposit" class="btn btn-dark" type="button">Deposit</a>
+        <a href="/withdraw" class="btn btn-dark" type="button">Withdraw</a>
+        <a href="/reset" class="btn btn-dark" type="button">Reset</a>
     </div>
     {% if content|length == 0 %}
     <div class="alert alert-secondary w-75 mx-auto m-4" role="alert">

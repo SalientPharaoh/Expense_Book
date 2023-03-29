@@ -4,14 +4,13 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']="sqlite:///finance.db"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
+#app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
+
+app.config['SQLALCHEMY_BINDS'] = {
+    'second': 'sqlite:///second.db'
+}
+
 db=SQLAlchemy(app)
-
-class money():
-    total=0
-    balance=0
-
-wallet = money()
 
 class data(db.Model):
     SNO= db.Column(db.Integer, primary_key=True)
@@ -21,6 +20,16 @@ class data(db.Model):
 
     def __repr__(self) -> str:
         return f'{self.Amount} :- {self.Expense}'
+
+class Money(db.Model):
+    __bind_key__ = 'second'
+    id = db.Column(db.Integer, primary_key=True)
+    total = db.Column(db.Integer, default=0)
+    balance = db.Column(db.Integer, default=0)
+
+    def __repr__(self) -> str:
+        return f'{self.total} :- {self.balance}'
+    
 
 with app.app_context():
     db.create_all()
@@ -33,9 +42,18 @@ def hello_world():
         temp = data(Amount=int(amount), Expense=reason)
         db.session.add(temp)
         db.session.commit()
-        wallet.balance = wallet.balance - int(amount)
+        money = Money.query.first()
+        money.balance=money.balance-int(amount)
+        db.session.commit()
 
     content=data.query.all()
+    wallet =Money.query.all()
+    if len(wallet)==0:
+        temp=Money()
+        db.session.add(temp)
+        db.session.commit()
+
+    print(wallet)
     return render_template('index.html', content=content, balance=wallet)
 
 @app.route('/delete/<int:sno>')
@@ -44,7 +62,9 @@ def delete(sno):
     db.session.delete(content)
     db.session.commit()
     prevamt = content.Amount
-    wallet.balance = wallet.balance + prevamt
+    money=Money.query.first()
+    money.balance = money.balance + prevamt
+    db.session.commit()
 
 
     return redirect('/')
@@ -59,7 +79,9 @@ def update(sno):
 
         if(prevamt!=amount):
             diff=int(prevamt)-int(amount)
-            wallet.balance = wallet.balance + diff
+            money=Money.query.first()
+            money.balance = money.balance + diff
+            db.session.commit()
 
         content.Amount=amount
         content.Expense=reason
@@ -74,11 +96,39 @@ def update(sno):
 def deposit():
     if request.method=='POST':
         dep=request.form['Amount']
-        wallet.balance = wallet.balance + int(dep)
-        wallet.total = wallet.total + int(dep)
+        money=Money.query.first()
+        money.balance = money.balance + int(dep)
+        money.total = money.total + int(dep)
+        db.session.commit()
         return redirect('/')
     
     return render_template('deposit.html')
+
+@app.route('/withdraw', methods=['GET', 'POST'])
+def withdraw():
+    if request.method=='POST':
+        dep=request.form['Amount']
+        money=Money.query.first()
+        money.balance = money.balance - int(dep)
+        money.total = money.total - int(dep)
+        db.session.commit()
+        return redirect('/')
+    
+    return render_template('withdraw.html')
+
+@app.route('/reset', methods=['GET', 'POST'])
+def reset():
+    content_=data.query.all()
+    for i in content_:
+            content = data.query.filter_by(SNO = i.SNO).first()
+            db.session.delete(content)
+            db.session.commit()
+
+    money= Money.query.first()
+    money.balance=0
+    money.total=0
+    db.session.commit()
+    return redirect('/')
 
 @app.route('/home')
 def home():
@@ -93,4 +143,4 @@ def stories():
     return render_template('stories.html')
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
