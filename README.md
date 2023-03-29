@@ -10,7 +10,9 @@ To deploy this project follow the following steps
   ./test/Scripts/activate.ps1
 ```
 * Deploy the flask server by running the code
-
+```bash
+  flask run
+```
 
 ## Features
 
